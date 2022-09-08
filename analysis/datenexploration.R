@@ -1,98 +1,64 @@
-# 2.4 Daten explorieren  ------------------------------------------------
+# Beantworte folgende Fragen zum Datensatz. Berichte die Ergebnisse auch in 
+# ganzen Sätzen.
 
-# 2.4.0
-# * Wie viele Maenner und Frauen sind im Datensatz?
-student_data_cleaned %>%
-  count(sex)
+# * Wie viele Probanden waren jeweils in den beiden Versuchsbedingungen?
+# * Wie viele Fremdsprachen beherrschten die Probanden durchschnittlich?
+# * Wie viel Zeit verbrachten die Teilnehmenden der beiden Versuchsbedingungen
+#   jeweils mit der Powerpointpräsentation? Stelle das Ergebnis auch in einem
+#   Balkendiagramm dar.
+# * Unterscheiden sich die Gruppen in ihrem Interesse an Fremdsprachen? Stelle
+#   das Ergebnis auch in zwei Boxplots dar.
+# * Verbrachten diejenigen, die mehr Interesse an Schwedisch bzw. an
+#   Fremdsprachen haben, längere Zeit mit der Powerpointpräsentation? Stelle
+#   dies in einem Punktdiagramm dar
+# * Schnitten diejenigen, die mindestens drei Fremdsprachen beherrschen, besser
+#   im Abschlusstest ab, als diejenigen, die weniger als drei Fremdsprachen
+#   sprechen?
+# * Schnitten die Teilnehmenden aus der Retrieval-Gruppe besser im Abschlusstest
+#   ab als die Teilnehmenden aus der Restudy-Gruppe?
+# * Visualisiere für die Retrieval-Gruppe mit einem geeigneten geom, inwiefern
+#   sich ihre Leistung beim Abruf der Vokabeln über die drei Testzeitpunkte 
+#   verbessert hat.
 
-# 2.4.1
-# * Bestimme die Spannweite und den Mittelwert des Alters aller SuS
-range(student_data_cleaned$age)
-mean(student_data_cleaned$age, na.rm = TRUE)
+motivation_data_cleaned %>% 
+  count(practice_type)
 
-# 2.4.2
-# * Wie viele SuS leben in Familien mit mehr als drei und wieviele mit
-#   weniger oder gleich drei Familienmitgliedern?
-student_data_cleaned %>%
-  count(famsize)
+mean(motivation_data_cleaned$number_languages, na.rm = TRUE)
 
-# 2.4.3
-# * Vergleiche, inwieweit sich die SuS in der Qualitaet ihrer familiaeren 
-#   Bindungen unterscheiden, wenn ihre Eltern zusammen oder getrennt leben.  
-# * Berechne den Mittelwert für beide Gruppen der Variable pstatus mit 
-#   den Funktionen group_by und fasse sie zusammen.
-student_data_cleaned %>%
-  group_by(pstatus) %>%
+motivation_data_cleaned %>% 
+  group_by(practice_type) %>% 
   summarise(
-    mean_famrel = mean(famrel)
+    mean_powerpoint = mean(time_free_choice_period)
   )
 
-# 2.4.4
-# * Untersuche, wie sich SuS aus kleinen und groeßeren Familien in 
-#   ihrer durchschnittlichen Mathenote unterscheiden. 
-# * Haben SuS aus kleinen Familien bessere Noten?
-student_data_cleaned %>%
-  group_by(famsize) %>%
+motivation_data_cleaned %>% 
+  group_by(practice_type) %>% 
   summarise(
-    mean_grade_math = mean(mean_grade_math)
+    mean_interest_lang = mean(interest_foreign_lang)
   )
 
-
-# 2.5 Daten visualisieren -----------------------------------------------------
-
-# 2.5.0
-# Untersuche den Datensatz mit Hilfe eines Balkendiagramms
-# * Erstelle ein aneinandergereihtes Balkendiagramm, das die Verteilung der 
-#   SuS auf die verschiedenen Level von familiaerer Bindungsqualitaet d
-#   auf der X-Achse darstellt und das Geschlecht durch die Farbe der 
-#   Balken kennzeichnet
-# * Nutze position = position_dodge(), um die Balken nebeneinander zu reihen.
-# * Füge sinnvolle Achsen- und Legendentitel hinzu
-# * Haben die Schueler bessere familiaere Bindungen als Schuelerinnen?
-ggplot(student_data_cleaned, aes(x = famrel, fill = sex)) +
-  geom_bar(position = position_dodge()) +
-  labs(
-    x     = "Qualität der familiären Bindung",
-    y     = "Anzahl",
-    fill  = "Geschlecht"
-  ) +
-  scale_y_continuous(expand = expansion(0)) +
-  scale_fill_viridis_d(option = "cividis", begin = 0.3, end = 0.9)
-
-
-# 2.5.1
-# Speichere die Visualisierung im R-Projekt ab unter dem Pfad
-# images/barbplot_mothers_education_status.png
-ggsave("images/verteilung_bildungsqualitaet_geschlecht.png",
-       width = 8, height = 5, dpi = 300)
-
-
-# 2.5.2
-# * Erstelle ein aneinandergereihtes Balkendiagramm mit dem Bildungslevel der 
-#   Muetter auf der x-Achse und deren Beschaeftigungsstatus auf der Y-Achse.
-# * Erstelle  eine neue bedingte Variable mit Hilfe von case_when.
-# * Unterscheiden sich die arbeitenden Muetter von den nicht arbeitenden 
-#   Muettern in ihrem Bildungslevel?
-student_data_cleaned %>%
+motivation_data_cleaned %>%
   mutate(
-    working_mother = case_when(
-      mjob %in% c("at_home") ~ "no",
-      TRUE ~ "yes"
+    min_3_lang = case_when(
+      number_languages > 2 ~ "yes",
+      number_languages <= 2 ~ "no"
     )
-  ) %>%  
-  ggplot(aes(x = medu, fill = working_mother)) +
-  geom_bar(position = "dodge") +
-  labs(
-    x     = "Bildungslevel der Mutter",
-    y     = "Anzahl",
-    fill  = "Working mother"
-  ) +
-  scale_y_continuous(expand = expansion(0)) +
-  scale_fill_viridis_d(option = "cividis", begin = 0.3, end = 0.9)
+  ) %>% 
+  group_by(min_3_lang) %>% 
+  summarise(
+    mean_final= mean(final_test)
+  )
 
+motivation_data_cleaned %>% 
+  group_by(practice_type) %>% 
+  summarise(
+    mean_final = mean(final_test)
+  )
 
-# 2.5.3
-# Speichere die Visualisierung im R-Projekt ab unter dem Pfad
-# images/barbplot_mothers_education_status.png
-ggsave("images/barbplot_mothers_education_status.png", width = 8,
-       height = 5, dpi = 300)
+motivation_data_cleaned %>% 
+  filter(practice_type == "retrieval") %>% 
+  summarise(
+    mean_cycle1 = mean(retrieval_practice_cycle1),
+    mean_cycle2 = mean(retrieval_practice_cycle2),
+    mean_final = mean(final_test)
+  )
