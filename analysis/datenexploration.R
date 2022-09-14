@@ -2,16 +2,16 @@
 # Beantworte folgende Fragen zum Datensatz. Berichte die Ergebnisse auch in 
 # ganzen Sätzen.
 
-# 7.4.1
+# 7.4.1 Probanden zählen
 # Wie viele Probanden waren jeweils in den beiden Versuchsbedingungen?
 motivation_data_cleaned %>% 
   count(practice_type)
 
-# 7.4.2
+# 7.4.2 Durchschnittliche Anzahl Fremdsprachen
 # Wie viele Fremdsprachen beherrschten die Probanden durchschnittlich?
 mean(motivation_data_cleaned$number_languages, na.rm = TRUE)
 
-# 7.4.3
+# 7.4.3 Gruppenvergleich Abschlusstest
 # Schnitten die Teilnehmenden aus der Retrieval-Gruppe besser im Abschlusstest
 # ab als die Teilnehmenden aus der Restudy-Gruppe?
 motivation_data_cleaned %>% 
@@ -20,10 +20,12 @@ motivation_data_cleaned %>%
     mean_final = mean(final_test)
   )
 
-# 7.4.4
-# Wie viel Zeit verbrachten die Teilnehmenden der beiden Versuchsbedingungen
-# jeweils mit der Powerpointpräsentation? Stelle das Ergebnis auch in einem
-# Balkendiagramm dar und speichere die Visualisierung im richtigen Ordner.
+# 7.4.4 Gruppenvergleich Powerpoint
+# * Wie viel Zeit verbrachten die Teilnehmenden der beiden Versuchsbedingungen
+#   jeweils mit der Powerpointpräsentation? Stelle das Ergebnis auch in einem
+#   Balkendiagramm dar und speichere die Visualisierung im richtigen Ordner
+# * Brauchst du Hilfe? Nutze den [ggplot-Cheatsheet]
+#   (https://ggplot2.tidyverse.org/)
 motivation_data_cleaned %>% 
   group_by(practice_type) %>% 
   summarise(
@@ -39,7 +41,7 @@ ggplot(aes(x = practice_type, y = mean_powerpoint)) +
 ggsave("images/balkendiagramm_condition_powerpoint.png", width = 8,
        height = 5, dpi = 300)
 
-# 7.4.5
+# 7.4.5 Gruppenvergleich Interesse
 # Unterscheiden sich die Gruppen in ihrem Interesse an Fremdsprachen? Stelle
 # das Ergebnis auch in zwei Boxplots dar.
 motivation_data_cleaned %>% 
@@ -59,10 +61,14 @@ labs(
 ggsave("images/boxplots_language_interest.png", width = 8,
        height = 5, dpi = 300)
 
-# 7.4.6
-# Visualisiere für die Retrieval-Gruppe mit einem geeigneten geom, inwiefern
-# sich ihre Leistung beim Abruf der Vokabeln über die drei Testzeitpunkte 
-# verbessert hat.
+# 7.4.6 Entwicklung Retrieval-Gruppe
+# * Visualisiere für die Retrieval-Gruppe mit einem geeigneten geom, inwiefern
+#   sich ihre Leistung beim Abruf der Vokabeln über die drei Testzeitpunkte 
+#   verbessert hat
+# * Brauchst du Hilfe?
+#   Orientiere dich an Aufgabe 3.7.1 aus Crashkurs 3
+#   Tipps, um die Daten in ein langes Format zu bringen: ?pivotlonger, 
+#   https://r4ds.had.co.nz/tidy-data.html#pivoting
 motivation_data_cleaned %>% 
   select(practice_type, retrieval_practice_cycle1, retrieval_practice_cycle2,
          final_test) %>%
@@ -93,8 +99,7 @@ motivation_data_cleaned %>%
 ggsave("images/balkendiagramm_retrieval_zeitpunkte.png", width = 8,
        height = 5, dpi = 300)
 
-
-# 7.4.7
+# 7.4.7 Zusammenhang Sprachen und Abschlusstest
 # Schnitten diejenigen, die mindestens drei Fremdsprachen beherrschen, besser
 # im Abschlusstest ab, als diejenigen, die weniger als drei Fremdsprachen
 # sprechen?
@@ -110,7 +115,7 @@ motivation_data_cleaned %>%
     mean_final = mean(final_test)
   )
 
-# 7.4.8
+# 7.4.8 Zusammenhang Interesse und Powerpoint
 # Verbrachten diejenigen, die mehr Interesse an Schwedisch bzw. an
 # Fremdsprachen haben, durchschnittlich längere Zeit mit der 
 # Powerpointpräsentation? Stelle dies in zwei Visualisierungen dar und speichere
