@@ -40,4 +40,4 @@ motivation_data_cleaned <- motivation_data %>%
 # * Exportiere den Datensatz in den richtigen Ordner
 # * Speichere die Daten sowohl als csv-Datei als auch als sav-Datei
 write_csv(motivation_data_cleaned, "data/cleaned/motivation_data_cleaned.csv")
-write_sav(motivation_data_cleaned, "data/export/motivation_data_cleaned.sav")
+write_sav(motivation_data_cleaned, "data/cleaned/motivation_data_cleaned.sav")
